@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="fr.uparis.informatique.cpoo5.junit5demo.TestJunit5Demo" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-11-20T10:12:36" hostname="eduroam-prg-og-1-29-254.net.univ-paris-diderot.fr" time="0.022">
+  <properties/>
+  <testcase name="testFonctionATester()" classname="fr.uparis.informatique.cpoo5.junit5demo.TestJunit5Demo" time="0.022"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
