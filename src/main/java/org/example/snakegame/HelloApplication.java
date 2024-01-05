@@ -29,7 +29,7 @@ public class HelloApplication extends Application {
     long gameTime = 0;
     List<GameObject> elements = new LinkedList<>();
     Snake player = new Snake(10, 10, 20, 20);
-    AI p = new AI(player);
+    //AI p = new AI(player);
     int step = 0;
     @Override
     public void start(Stage stage) throws IOException {
@@ -56,7 +56,7 @@ public class HelloApplication extends Application {
                     throw new RuntimeException(e);
                 }
 
-                double delta = (l - gameTime) / 1000000000.0;
+                double delta = (l - gameTime) / 1000000000.0;// to be used later
                 for (GameObject go : elements) {
                     gc.clearRect(0, 0, WIDTH, HEIGHT);
                     go.update();
@@ -73,7 +73,8 @@ public class HelloApplication extends Application {
         timer.start();
         root.getChildren().add(c);
         Scene s = new Scene(root);
-        //s.setOnKeyPressed(e-> Input.add(e.getCode(), true));
+        s.setOnKeyPressed(e-> Input.add(e.getCode(), true));
+
         stage.setScene(s);
 
         stage.setResizable(false);
