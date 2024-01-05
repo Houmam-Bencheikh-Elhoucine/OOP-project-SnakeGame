@@ -2,6 +2,7 @@ package org.example.snakegame;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -10,6 +11,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import javafx.scene.canvas.GraphicsContext;
 import org.example.snakegame.controllerclasses.Input;
+import org.example.snakegame.gameclasses.AI;
 import org.example.snakegame.gameclasses.GameObject;
 import org.example.snakegame.gameclasses.Snake;
 
@@ -27,6 +29,7 @@ public class HelloApplication extends Application {
     long gameTime = 0;
     List<GameObject> elements = new LinkedList<>();
     Snake player = new Snake(10, 10, 20, 20);
+    AI p = new AI(player);
     int step = 0;
     @Override
     public void start(Stage stage) throws IOException {
@@ -39,22 +42,20 @@ public class HelloApplication extends Application {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                /**
-                * main loop:
-                 * read inputs
-                 * update objects
-                 * draw to canvas
-                 * render
+                /*
+                 main loop:
+                  read inputs
+                  update objects
+                  draw to canvas
+                  render
                  */
-                if(step % 2 == 0){
-                    step ++;
-                    try {
-                        sleep(100-(l/1000000)%100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return ;
+
+                try {
+                    sleep(100-(l/1000000)%100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+
                 double delta = (l - gameTime) / 1000000000.0;
                 for (GameObject go : elements) {
                     gc.clearRect(0, 0, WIDTH, HEIGHT);
@@ -68,18 +69,23 @@ public class HelloApplication extends Application {
                 step ++;
             }
         };
+
         timer.start();
         root.getChildren().add(c);
         Scene s = new Scene(root);
-        s.setOnKeyPressed(e-> Input.add(e.getCode(), true));
+        //s.setOnKeyPressed(e-> Input.add(e.getCode(), true));
         stage.setScene(s);
 
         stage.setResizable(false);
+
         stage.show();
 
     }
-
-
+    @Override
+    public void stop(){
+        //p.stop();
+        Platform.exit();
+    }
     public static void main(String[] args) {
         launch();
     }
