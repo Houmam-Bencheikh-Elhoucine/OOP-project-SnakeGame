@@ -11,15 +11,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Snake extends GameObject {
+public abstract class SnakeAbstract extends GameObject {
     int speed = 200;
     Vec2 velocity = new Vec2(0, 0);
     Vec2 collisionDeadZone;
-    boolean isPlayer = false;
     boolean dead = false;
     List<SnakeSection> sections;
-    public Snake(float x, float y, float w, float h, boolean isPlayer) {
-        this.isPlayer = isPlayer;
+    public List<GameObject> colliders;
+    public SnakeAbstract(float x, float y, float w, float h) {
         this.dead = false;
         this.dims = new Vec2(w, h);// useful for adding new sections
         this.position = new Vec2(x, y);
@@ -27,48 +26,20 @@ public class Snake extends GameObject {
         this.c = Color.rgb(RandGen.randInt(150), RandGen.randInt(150), RandGen.randInt(150));
         this.type = "Snake";
         sections = new LinkedList<>();
-        for (int i = 0; i < 4; i++) {
+        colliders = new LinkedList<>();
+        for (int i = 0; i < 50; i++) {
             sections.add(new SnakeSection(x - (w/2)*i, y, w, h, (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255)));
-
         }
-
     }
+    abstract void updateVelocity();// this method gets modified according to the needs of the subclasses
     @Override
     public void update(double delta) {
-        if (dead){
-            if(!sections.isEmpty()) {
-                sections.remove(sections.size() - 1);
-            }
-            return ;
+        // update velocity
+        if(!dead) {
+            updateVelocity();
         }
-        if(isPlayer) {// if isPlayer: handle inputs
-            if (Input.isKeyPressed(KeyCode.UP) && velocity.y == 0) {
-                //System.out.println("Pressed UP");
-                velocity.x = 0;
-                velocity.y = -speed;
-            } else if (Input.isKeyPressed(KeyCode.DOWN) && velocity.y == 0) {
-                //System.out.println("Pressed DOWN");
-                velocity.x = 0;
-                velocity.y = speed;
-            } else if (Input.isKeyPressed(KeyCode.LEFT) && velocity.x == 0) {
-                //System.out.println("Pressed LEFT");
-                velocity.y = 0;
-                velocity.x = -speed;
-            } else if (Input.isKeyPressed(KeyCode.RIGHT) && velocity.x == 0) {
-                //System.out.println("Pressed RIGHT");
-                velocity.y = 0;
-                velocity.x = speed;
-            }
-        }
-        /*else{
-            velocity.y = 0;
-            velocity.x = 0;
-
-        }*/
-        this.position = sections.get(0).position;//always get the position of the head
-
-        if(velocity.x == 0 && velocity.y == 0){
-            return;
+        else{
+            velocity = new Vec2(0, 0);
         }
         AtomicReference<Vec2> prevPos = new AtomicReference<>(null);
         // get the reference of the previous section
@@ -85,6 +56,19 @@ public class Snake extends GameObject {
                 prevPos.set(e.position);
             }
         });
+        if(isColliding()){
+            for(GameObject go: colliders){
+                if(go instanceof Food){
+
+                    ((Collectible) go).collected = true;
+                    grow(((Food) go).getValue());
+                }
+                if((go instanceof SnakeAbstract)||(go instanceof Obstacle)){
+                    System.out.println(kill());
+                }
+            }
+        }
+//        colliders.clear();
     }
 
     @Override
@@ -95,6 +79,7 @@ public class Snake extends GameObject {
             s.draw(gc);
         }
     }
+
     // collisionX, verifies overlaps accross X axis
     boolean collisionX(GameObject other){
         return
@@ -107,7 +92,7 @@ public class Snake extends GameObject {
     }
     boolean isCollidingWithOther(GameObject other){
         if (other.getType().equals("Snake")){
-            for(SnakeSection s : ((Snake)other).sections){
+            for(SnakeSection s : ((SnakeAbstract)other).sections){
                 //collision with a snake is when the head hits the body of the other snake
                 if(collisionY(s) && collisionX(s))return true;
             }
@@ -115,19 +100,17 @@ public class Snake extends GameObject {
         }
         return collisionX(other) && collisionY(other);
     }
-    boolean isCollidingWithSelf(){
-        for(int i = 1; i < sections.size(); i++){
-            if(isCollidingWithOther(sections.get(i))){
-                return true;
-            }
-        }
-        return false;
-    }
-    public boolean isColliding(GameObject other){
+    public boolean Collided(GameObject other){
         if (other == this){
             return false;
         }
         return isCollidingWithOther(other);
+    }
+    public boolean isColliding(){
+        return !colliders.isEmpty();
+    }
+    public void addCollider(GameObject other){
+        colliders.add(other);
     }
     public void grow(int scs){
         int sz = sections.size();

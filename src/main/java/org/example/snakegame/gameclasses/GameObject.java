@@ -4,12 +4,16 @@ import com.almasb.fxgl.core.math.Vec2;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class GameObject {
+public abstract class GameObject {
     Vec2 position; // the position of the center of the image
     Vec2 dims; // the dimensions of the image (width, height)
     Color c;// the color of the section
+    String type = "GameObject";
 
-    public void update() {
+    public String getType(){
+        return type;
+    }
+    public void update(double delta) {
     }
 
     void setup() {

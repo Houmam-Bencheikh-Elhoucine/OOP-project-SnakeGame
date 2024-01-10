@@ -10,19 +10,21 @@ public class SnakeSection extends GameObject {
     public SnakeSection(int x, int y, int w, int h) {
         this.position = new Vec2(x, y);
         this.dims = new Vec2(w, h);
+        this.type = "SnakeSection";
         this.c = new Color(RandGen.randDouble(), RandGen.randDouble(), RandGen.randDouble(), 1.0);
     }
 
-    public SnakeSection(int x, int y, int w, int h, int r, int g, int b) {
+    public SnakeSection(float x, float y, float w, float h, int r, int g, int b) {
         this.position = new Vec2(x, y);
         this.dims = new Vec2(w, h);
+        this.type = "Snake";
         this.c = new Color(r/255.0, g/255.0, b/255.0, 1.0);
     }
     @Override
     public void draw(GraphicsContext gc) {
         gc.setFill(c);
         //System.out.println(c.getRed()+" "+c.getGreen()+" "+c.getGreen());
-        gc.fillRect(position.x - dims.x/2,
+        gc.fillOval(position.x - dims.x/2,
                 position.y - dims.y/2,
                 dims.x, dims.y); // display the rectangle in a position relative to the center of the object
 

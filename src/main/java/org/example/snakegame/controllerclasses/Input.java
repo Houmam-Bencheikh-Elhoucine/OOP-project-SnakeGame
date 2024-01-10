@@ -1,5 +1,6 @@
 package org.example.snakegame.controllerclasses;
 
+import com.almasb.fxgl.core.math.Vec2;
 import javafx.scene.input.KeyCode;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.HashSet;
  */
 public class Input {
     private static HashMap<KeyCode, Boolean> keys = new HashMap<>();
-
+    private static Vec2 mousePos = new Vec2(0, 0);
     public static void add(KeyCode k, boolean b){
         keys.put(k, b);
     }
@@ -27,5 +28,9 @@ public class Input {
             return false;
         }
         return b;
+    }
+    public static void setNewMousePos(float x, float y){
+        mousePos.x = x;
+        mousePos.y = y;
     }
 }
