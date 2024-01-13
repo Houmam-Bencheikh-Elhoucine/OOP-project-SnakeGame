@@ -2,10 +2,11 @@ package org.example.snakegame.gameclasses;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 public abstract class Collectible extends GameObject {
     public boolean collected = false;
-    Color c;
+
     @Override
     public void draw(GraphicsContext gc){
         if(!collected){

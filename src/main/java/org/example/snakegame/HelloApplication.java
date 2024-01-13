@@ -32,31 +32,31 @@ public class HelloApplication extends Application {
     List<GameObject> elements = new LinkedList<>();
     SnakeAbstract player;
     SnakeAbstract player2;
-    SnakeAbstract aiSnake;
+    //SnakeAbstract aiSnake;
     @Override
     public void start(Stage stage) throws IOException{
-        /*HashMap<String, KeyCode> inputKeys = new HashMap<>();
+        HashMap<String, KeyCode> inputKeys = new HashMap<>();
         inputKeys.put("up", KeyCode.Z);
         inputKeys.put("down", KeyCode.S);
         inputKeys.put("left", KeyCode.Q);
         inputKeys.put("right", KeyCode.D);
-        player = new KeyboardPlayerSnake(10+ (float) WIDTH /2, 10+ (float) HEIGHT /2, 20, 20, inputKeys);
+        player = new KeyboardPlayerSnake(10+ (float) WIDTH /4, 10+ (float) HEIGHT /2, 20, 20, inputKeys);
         HashMap<String, KeyCode> inputKeys2 = new HashMap<>();
         inputKeys2.put("up", KeyCode.UP);
         inputKeys2.put("down", KeyCode.DOWN);
         inputKeys2.put("left", KeyCode.LEFT);
         inputKeys2.put("right", KeyCode.RIGHT);
-        player2 = new KeyboardPlayerSnake(10+ (float) WIDTH /4, 10+ (float) HEIGHT /4, 20, 20, inputKeys2);
-        aiSnake = new AiSnake(10+ (float) WIDTH /8, 10+ (float) HEIGHT /8, 20, 20);
-        */
-        player = new MousePlayerSnake(10+ (float) WIDTH /2, 10+ (float) HEIGHT /2, 20, 20);
+        player2 = new KeyboardPlayerSnake(10+ (float) 3*WIDTH /4, 10+ (float) HEIGHT /2, 20, 20, inputKeys2);
+        //aiSnake = new AiSnake(10+ (float) WIDTH /8, 10+ (float) HEIGHT /8, 20, 20);
+
+        //player = new MousePlayerSnake(10+ (float) WIDTH /2, 10+ (float) HEIGHT /2, 20, 20);
         c = new Canvas(800, 600);
         stage.setTitle("Snake Game - Part 1");
         GraphicsContext gc = c.getGraphicsContext2D();
 
         // render stuff in gc
         elements.add(player);
-//        elements.add(player2);
+        elements.add(player2);
 //        elements.add(aiSnake);
         for(int i = 0; i < RandGen.randInt(2, 15); i++){
             elements.add(new Obstacle(RandGen.randInt(WIDTH), RandGen.randInt(HEIGHT),
@@ -80,26 +80,38 @@ public class HelloApplication extends Application {
                 gc.clearRect(0, 0, WIDTH, HEIGHT);
                 for (GameObject go : elements) {
                     go.update(delta);
-                    if(go instanceof SnakeAbstract) {
-                        for (GameObject oth: elements){
-                            if(((SnakeAbstract) go).Collided(oth)){
+                    if (go instanceof SnakeAbstract) {
+                        for (GameObject oth : elements) {
+                            if (((SnakeAbstract) go).Collided(oth)) {
                                 ((SnakeAbstract) go).addCollider(oth);
-                                System.out.println("we have a collision");
+                                // System.out.println("we have a collision");
                             }
                         }
                     }
                     go.draw(gc);
                     // check for collisions
-                    /*
-                    elements.remove(player);
-                    player = new KeyboardPlayerSnake(10+ (float) WIDTH /2, 10+ (float) HEIGHT /2, 20, 20, inputKeys);
-                    player2 = new KeyboardPlayerSnake(10+ (float) WIDTH /2, 10+ (float) HEIGHT /4, 20, 20, inputKeys2);
-                    System.out.println("spawned!!");
-                    elements.add(player);
-                    elements.add(player2);*/
-                    }
+                    if (player.isDead()) {
+                        elements.remove(player);
+                        player = new KeyboardPlayerSnake(10+ (float) WIDTH /4, 10+ (float) HEIGHT /2, 20, 20, inputKeys);
+                        //player2 = new KeyboardPlayerSnake(10+ (float) WIDTH /2, 10+ (float) HEIGHT /4, 20, 20, inputKeys2);
+                        //System.out.println("spawned!!");
+                        elements.add(player);
+                        System.out.println("Dead!!");
 
-                elements = elements.stream().filter(e->{
+                        //elements.add(player2);
+                    }
+                }
+                if (player2.isDead()) {
+                    elements.remove(player2);
+                    player2 = new KeyboardPlayerSnake(10+ (float) 3*WIDTH /4, 10+ (float) HEIGHT /2, 20, 20, inputKeys2);
+                    //player2 = new KeyboardPlayerSnake(10+ (float) WIDTH /2, 10+ (float) HEIGHT /4, 20, 20, inputKeys2);
+                    //System.out.println("spawned!!");
+                    elements.add(player2);
+                    System.out.println("Dead!!");
+                    //elements.add(player2);
+                }
+
+            elements = elements.stream().filter(e->{
                     if (e instanceof Food){
                         return !((Food)e).collected;
                     }
@@ -116,6 +128,7 @@ public class HelloApplication extends Application {
         root.getChildren().add(c);
         Scene s = new Scene(root);
         s.setOnKeyPressed(e-> Input.add(e.getCode(), true));
+        s.setOnMouseEntered(e->Input.setNewMousePos((float) e.getX(), (float) e.getY()));
         s.setOnMouseMoved(e->Input.setNewMousePos((float) e.getX() ,(float) e.getY()));
         stage.setScene(s);
 

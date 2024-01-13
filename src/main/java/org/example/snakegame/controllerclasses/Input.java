@@ -15,7 +15,7 @@ import java.util.HashSet;
  */
 public class Input {
     private static HashMap<KeyCode, Boolean> keys = new HashMap<>();
-    private static Vec2 mousePos = new Vec2(0, 0);
+    private static final Vec2 mousePos = new Vec2(0, 0);
     public static void add(KeyCode k, boolean b){
         keys.put(k, b);
     }

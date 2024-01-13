@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class SnakeAbstract extends GameObject {
-    int speed = 50;
+    int speed = 100;
     Vec2 velocity = new Vec2(0, 0);
     Vec2 collisionDeadZone;
     boolean dead = false;
@@ -27,8 +27,8 @@ public abstract class SnakeAbstract extends GameObject {
         this.type = "Snake";
         sections = new LinkedList<>();
         colliders = new LinkedList<>();
-        for (int i = 0; i < 50; i++) {
-            sections.add(new SnakeSection(x - (w/2)*i, y, w, h, (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255)));
+        for (int i = 0; i < 5; i++) {
+            sections.add(new SnakeSection(x - (w/2)*i, y, w, (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255)));
         }
     }
     abstract void updateVelocity();// this method gets modified according to the needs of the subclasses
@@ -55,6 +55,7 @@ public abstract class SnakeAbstract extends GameObject {
                         ).normalize().mul(dims.x/2));
                 prevPos.set(e.position);
             }
+            e.update();
         });
         if(isColliding()){
             for(GameObject go: colliders){
@@ -64,11 +65,13 @@ public abstract class SnakeAbstract extends GameObject {
                     grow(((Food) go).getValue());
                 }
                 if((go instanceof SnakeAbstract)||(go instanceof Obstacle)){
-                    System.out.println(kill());
+                    //System.out.println(kill());
+                    kill();
                 }
             }
         }
-//        colliders.clear();
+
+        colliders.clear();
     }
 
     @Override
@@ -91,7 +94,7 @@ public abstract class SnakeAbstract extends GameObject {
                 Math.abs(this.position.y - other.position.y) < (this.dims.y + other.dims.y)/2.0 - collisionDeadZone.y;
     }
     boolean isCollidingWithOther(GameObject other){
-        if (other.getType().equals("Snake")){
+        /*if (other.getType().equals("Snake")){
             for(SnakeSection s : ((SnakeAbstract)other).sections){
                 //collision with a snake is when the head hits the body of the other snake
                 if(collisionY(s) && collisionX(s))return true;
@@ -99,6 +102,20 @@ public abstract class SnakeAbstract extends GameObject {
             return false;
         }
         return collisionX(other) && collisionY(other);
+    */
+        SnakeSection head = this.sections.get(0);
+        if(other.getType().equals("Snake")){
+            for(int i = 1; i < ((SnakeAbstract)other).sections.size(); i++){
+                SnakeSection s = ((SnakeAbstract)other).sections.get(i);
+                if(s.collider.getBoundsInLocal().intersects(head.collider.getBoundsInLocal())){
+                    return true;
+                }
+            }
+        }
+        if(other.getType().equals("Snake")){
+            return false;
+        }
+        return other.collider.getBoundsInLocal().intersects(head.collider.getBoundsInLocal());
     }
     public boolean Collided(GameObject other){
         if (other == this){
@@ -116,7 +133,7 @@ public abstract class SnakeAbstract extends GameObject {
         int sz = sections.size();
         Vec2 drop = sections.get(sz-2).position;
         for (int i = 0; i < scs; i++){
-            sections.add(new SnakeSection(drop.x, drop.y, dims.x, dims.y,
+            sections.add(new SnakeSection(drop.x, drop.y, dims.x,
                     (int) (c.getRed() * 255),
                     (int) (c.getGreen() * 255),
                     (int) (c.getBlue() * 255)));

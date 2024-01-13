@@ -3,6 +3,7 @@ package org.example.snakegame.gameclasses;
 import com.almasb.fxgl.core.math.Vec2;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import org.example.snakegame.controllerclasses.RandGen;
 
 public class Food extends Collectible{
@@ -15,6 +16,7 @@ public class Food extends Collectible{
         this.dims = new Vec2(10*value, 10*value);
         this.value = value;
         type = "Food";
+        collider = new Circle(x, y, dims.x/2);
     }
 
     public int getValue() {
