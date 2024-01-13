@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class SnakeAbstract extends GameObject {
-    int speed = 200;
+    int speed = 50;
     Vec2 velocity = new Vec2(0, 0);
     Vec2 collisionDeadZone;
     boolean dead = false;

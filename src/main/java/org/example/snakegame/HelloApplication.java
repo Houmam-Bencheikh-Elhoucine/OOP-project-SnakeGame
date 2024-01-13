@@ -33,10 +33,9 @@ public class HelloApplication extends Application {
     SnakeAbstract player;
     SnakeAbstract player2;
     SnakeAbstract aiSnake;
-    //AI p = new AI(aiSnake);
     @Override
     public void start(Stage stage) throws IOException{
-        HashMap<String, KeyCode> inputKeys = new HashMap<>();
+        /*HashMap<String, KeyCode> inputKeys = new HashMap<>();
         inputKeys.put("up", KeyCode.Z);
         inputKeys.put("down", KeyCode.S);
         inputKeys.put("left", KeyCode.Q);
@@ -49,14 +48,16 @@ public class HelloApplication extends Application {
         inputKeys2.put("right", KeyCode.RIGHT);
         player2 = new KeyboardPlayerSnake(10+ (float) WIDTH /4, 10+ (float) HEIGHT /4, 20, 20, inputKeys2);
         aiSnake = new AiSnake(10+ (float) WIDTH /8, 10+ (float) HEIGHT /8, 20, 20);
+        */
+        player = new MousePlayerSnake(10+ (float) WIDTH /2, 10+ (float) HEIGHT /2, 20, 20);
         c = new Canvas(800, 600);
         stage.setTitle("Snake Game - Part 1");
         GraphicsContext gc = c.getGraphicsContext2D();
 
         // render stuff in gc
         elements.add(player);
-        elements.add(player2);
-        elements.add(aiSnake);
+//        elements.add(player2);
+//        elements.add(aiSnake);
         for(int i = 0; i < RandGen.randInt(2, 15); i++){
             elements.add(new Obstacle(RandGen.randInt(WIDTH), RandGen.randInt(HEIGHT),
                     RandGen.randInt(1, 15)*10, RandGen.randInt(1, 15)*10));

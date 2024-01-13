@@ -33,4 +33,7 @@ public class Input {
         mousePos.x = x;
         mousePos.y = y;
     }
+    public static Vec2 getMousePos(){
+        return mousePos.copy();
+    }
 }
