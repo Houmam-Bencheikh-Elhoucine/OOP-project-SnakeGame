@@ -59,7 +59,6 @@ public abstract class SnakeAbstract extends GameObject {
                 prevPos.set(e.position);
                 if(isPlayer) {
                     Camera.update(e.position);
-                    wrap();
                 }
             }
             else{
@@ -83,6 +82,7 @@ public abstract class SnakeAbstract extends GameObject {
             }
         }
         colliders.clear();
+        wrap();
     }
 
     @Override
@@ -164,7 +164,9 @@ public abstract class SnakeAbstract extends GameObject {
         int sz = sections.size();
         Vec2 drop = sections.get(sz-2).position;
         speed += scs;
-        scoreCnt.set(scoreCnt.get() + scs);
+        if(scoreCnt != null) {
+            scoreCnt.set(scoreCnt.get() + scs);
+        }
         for (int i = 0; i < scs; i++){
             sections.add(new SnakeSection(drop.x, drop.y, dims.x, collisionDeadZone,
                     (int) (c.getRed() * 255),

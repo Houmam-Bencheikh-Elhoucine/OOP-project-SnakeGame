@@ -80,7 +80,9 @@ public class TwoPlayerScene extends GameScene {
         this.elements.add(new Obstacle(0, 0, WIDTH*2, 20));
         this.elements.add(new Obstacle(WIDTH-10, 0, 20, HEIGHT*2));
         this.elements.add(new Obstacle(0, HEIGHT-10, WIDTH*2, 20));
-
+        for (int i = 0; i < 2; i++){
+            elements.add(new AiSnake(RandGen.randInt(WIDTH), RandGen.randInt(HEIGHT), 25, 25));
+        }
         /*for (int i = 0; i < RandGen.randInt(10, maxObstacles); i++) {
             elements.add(new Obstacle(RandGen.randInt(WIDTH), RandGen.randInt(HEIGHT),
                     RandGen.randInt(5, 10) * 10, RandGen.randInt(5, 10) * 10));
@@ -138,6 +140,9 @@ public class TwoPlayerScene extends GameScene {
                     gameEnded = true;
                 }
                 elements = elements.stream().filter(e -> {
+                    if(e.getType().equals("Snake")){
+                        return !((SnakeAbstract)e).isDead();
+                    }
                     if (e instanceof Food) {
                         if (((Food) e).collected) {
                             collCount--;

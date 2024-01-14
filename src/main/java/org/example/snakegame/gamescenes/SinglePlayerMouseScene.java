@@ -27,9 +27,11 @@ public class SinglePlayerMouseScene extends GameScene{
     List<GameObject> elements;
     AnimationTimer timer;
     int collCountMax = 100;
-    float maxObstacles = 0;
+    int maxObstacles = 0;
+    int maxAi = 2;
     int collCount = 0;
     int obsCount = 0;
+    int aiCount = 0;
     boolean gameEnded;
     boolean reload = false;
     GameLabel labelScore = new GameLabel("", true, false, new Vec2(20, 20), 20);
@@ -59,6 +61,10 @@ public class SinglePlayerMouseScene extends GameScene{
             this.elements.add(new Food(RandGen.randInt(WIDTH/2, MAP_WIDTH - WIDTH/2), RandGen.randInt(HEIGHT/2, MAP_HEIGHT - HEIGHT/2),
                     RandGen.randInt(1, 5)));
         }
+        for (int i = 0; i < maxAi; i++) {
+            this.elements.add(new AiSnake(RandGen.randInt(WIDTH), RandGen.randInt(HEIGHT), 25, 25));
+        }
+        aiCount = maxAi;
         collCount = collCountMax;
 
     }
@@ -100,7 +106,15 @@ public class SinglePlayerMouseScene extends GameScene{
                     labelScore.hide();
                     gameEnded = true;
                 }
+
                 elements = elements.stream().filter(e -> {
+                    if(e.getType().equals("Snake")){
+                        if(((SnakeAbstract) e).isDead()) {
+                            aiCount --;
+                            return false;
+                        }
+                        return true;
+                    }
                     if (e instanceof Food) {
                         if (((Food) e).collected) {
                             collCount--;
@@ -124,8 +138,17 @@ public class SinglePlayerMouseScene extends GameScene{
                     elements.add(new Obstacle(RandGen.randInt(WIDTH/2, MAP_WIDTH - WIDTH/2), RandGen.randInt(HEIGHT/2, MAP_HEIGHT - HEIGHT/2),
                             RandGen.randInt(5, 20) * 10, RandGen.randInt(5, 20) * 10));
                 }
+                for (;aiCount < maxAi; aiCount++) {
+                    GameObject toRem = elements.get(RandGen.randInt(elements.size()));
+                    if(toRem.getType().equals("Obstacle")){
+                        elements.remove(toRem);
+                    }
+                    elements.add(new AiSnake(RandGen.randInt(WIDTH/2, MAP_WIDTH - WIDTH/2), RandGen.randInt(HEIGHT/2, MAP_HEIGHT - HEIGHT/2)
+                            , 25, 25));
+                }
                 Input.clean();
                 maxObstacles = score1.get();
+                maxAi = score1.get()+2;
                 gameTime = l;
             }
         };

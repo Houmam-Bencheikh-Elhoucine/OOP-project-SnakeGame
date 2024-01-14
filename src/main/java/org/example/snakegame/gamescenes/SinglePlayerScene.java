@@ -30,7 +30,9 @@ public class SinglePlayerScene extends GameScene {
     List<GameObject> elements;
     AnimationTimer timer;
     int collCountMax = 100;
-    float maxObstacles = 0;
+    int maxObstacles = 0;
+    int maxAi = 2;
+    int aiCount = 0;
     int collCount = 0;
     int obsCount = 0;
     boolean gameEnded;
@@ -70,6 +72,10 @@ public class SinglePlayerScene extends GameScene {
             this.elements.add(new Food(RandGen.randInt(WIDTH/2, MAP_WIDTH - WIDTH/2), RandGen.randInt(HEIGHT/2, MAP_HEIGHT - HEIGHT/2),
                     RandGen.randInt(1, 5)));
         }
+        for (int i = 0; i < maxAi; i++) {
+            this.elements.add(new AiSnake(RandGen.randInt(WIDTH), RandGen.randInt(HEIGHT), 25, 25));
+        }
+        aiCount = maxAi;
         collCount = collCountMax;
 
     }
@@ -112,6 +118,9 @@ public class SinglePlayerScene extends GameScene {
                     gameEnded = true;
                 }
                 elements = elements.stream().filter(e -> {
+                    if(e.getType().equals("Snake")){
+                        return !((SnakeAbstract)e).isDead();
+                    }
                     if (e instanceof Food) {
                         if (((Food) e).collected) {
                             collCount--;
@@ -137,6 +146,7 @@ public class SinglePlayerScene extends GameScene {
                 }
                 Input.clean();
                 maxObstacles = score1.get();
+                maxAi = score1.get() + 2;
                 gameTime = l;
             }
         };
