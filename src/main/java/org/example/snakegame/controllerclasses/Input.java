@@ -32,6 +32,7 @@ public class Input {
     public static void setNewMousePos(float x, float y){
         mousePos.x = x;
         mousePos.y = y;
+        //System.out.println(mousePos);
     }
     public static Vec2 getMousePos(){
         return mousePos.copy();

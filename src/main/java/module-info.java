@@ -10,4 +10,6 @@ module org.example.snakegame {
 
     opens org.example.snakegame to javafx.fxml;
     exports org.example.snakegame;
+    exports org.example.snakegame.gamescenes;
+    opens org.example.snakegame.gamescenes to javafx.fxml;
 }

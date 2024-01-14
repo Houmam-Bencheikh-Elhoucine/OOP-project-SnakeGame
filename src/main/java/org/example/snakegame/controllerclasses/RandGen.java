@@ -5,7 +5,7 @@ import java.util.Random;
 public class RandGen{
     private static Random generator = new Random();
     public static int randInt(int a, int b){
-        return generator.nextInt(a, b);
+        return a<b ? generator.nextInt(a, b) : generator.nextInt(b, a);
     }
     public static int randInt(int a){
         return generator.nextInt(a);

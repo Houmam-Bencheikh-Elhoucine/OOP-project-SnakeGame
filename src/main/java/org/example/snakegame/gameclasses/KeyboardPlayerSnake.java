@@ -3,14 +3,13 @@ package org.example.snakegame.gameclasses;
 import javafx.scene.input.KeyCode;
 import org.example.snakegame.controllerclasses.Input;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class KeyboardPlayerSnake extends SnakeAbstract{
     HashMap<String, KeyCode> inputKeys;
-    public KeyboardPlayerSnake(float x, float y, float w, float h, HashMap<String, KeyCode> inputKeys){
-        super(x, y, w, h);
+    public KeyboardPlayerSnake(float x, float y, float w, float h, AtomicInteger scoreCnt, boolean player, HashMap<String, KeyCode> inputKeys){
+        super(x, y, w, h, player, scoreCnt);
         // input keys must have the following form
         /*
          * {"up": keyUP, "down": keyDown, "left": keyLeft, "right": keyRight}

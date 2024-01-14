@@ -13,7 +13,7 @@ public class Food extends Collectible{
                 RandGen.randInt(150, 255),
                 RandGen.randInt(150, 255));
         this.position = new Vec2(x, y);
-        this.dims = new Vec2(10*value, 10*value);
+        this.dims = new Vec2(20*value, 20*value);
         this.value = value;
         type = "Food";
         collider = new Circle(x, y, dims.x/2);

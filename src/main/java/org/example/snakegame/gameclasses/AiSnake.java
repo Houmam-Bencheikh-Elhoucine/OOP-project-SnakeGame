@@ -8,12 +8,12 @@ public class AiSnake extends SnakeAbstract{
     private float t = 0;
 
     public AiSnake(float x, float y, float w, float h) {
-        super(x, y, w, h);
+        super(x, y, w, h, false, null);
     }
 
     private void changeDirection(){
-        velocity = position.sub(new Vec2(RandGen.randDouble(position.x - 100, position.x + 100),
-                RandGen.randDouble(position.y - 100, position.y + 100)));
+        velocity = sections.get(0).position.sub(new Vec2(RandGen.randDouble(position.x - 100, position.x + 100),
+                RandGen.randDouble(position.y - 100, position.y + 100))).normalize().mul(speed);
     }
     @Override
     void updateVelocity(){

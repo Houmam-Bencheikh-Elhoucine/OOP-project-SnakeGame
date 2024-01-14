@@ -4,31 +4,40 @@ import com.almasb.fxgl.core.math.Vec2;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import org.example.snakegame.controllerclasses.Camera;
 import org.example.snakegame.controllerclasses.Input;
 import org.example.snakegame.controllerclasses.RandGen;
+import org.example.snakegame.globals.GameParameters;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.example.snakegame.globals.GameParameters.*;
+
 public abstract class SnakeAbstract extends GameObject {
-    int speed = 100;
+    float speed = 100;
     Vec2 velocity = new Vec2(0, 0);
-    Vec2 collisionDeadZone;
-    boolean dead = false;
+    double collisionDeadZone;
+    boolean dead;
     List<SnakeSection> sections;
     public List<GameObject> colliders;
-    public SnakeAbstract(float x, float y, float w, float h) {
+    boolean isPlayer = false;
+    AtomicInteger scoreCnt;
+    public SnakeAbstract(float x, float y, float w, float h, boolean player, AtomicInteger scoreCnt) {
         this.dead = false;
+        isPlayer = player;
+        this.scoreCnt = scoreCnt;
         this.dims = new Vec2(w, h);// useful for adding new sections
         this.position = new Vec2(x, y);
-        collisionDeadZone = dims.mul(0.2);// collision dead zone is useful for improving gameplay through not detecting collisions at pixel rate...
+        collisionDeadZone = 0.2;// collision dead zone is useful for improving gameplay through not detecting collisions at pixel rate...
         this.c = Color.rgb(RandGen.randInt(150), RandGen.randInt(150), RandGen.randInt(150));
         this.type = "Snake";
         sections = new LinkedList<>();
         colliders = new LinkedList<>();
-        for (int i = 0; i < 5; i++) {
-            sections.add(new SnakeSection(x - (w/2)*i, y, w, (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255)));
+        for (int i = 0; i < 4; i++) {
+            sections.add(new SnakeSection(x - (w/2)*i, y, w, collisionDeadZone, (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255)));
         }
     }
     abstract void updateVelocity();// this method gets modified according to the needs of the subclasses
@@ -36,6 +45,7 @@ public abstract class SnakeAbstract extends GameObject {
     public void update(double delta) {
         // update velocity
         if(!dead) {
+            //System.out.print("not dead ");
             updateVelocity();
         }
         else{
@@ -47,6 +57,10 @@ public abstract class SnakeAbstract extends GameObject {
             if (prevPos.get() == null){
                 e.position = e.position.add(velocity.mul(delta));
                 prevPos.set(e.position);
+                if(isPlayer) {
+                    Camera.update(e.position);
+                    wrap();
+                }
             }
             else{
                 e.position = prevPos.get().add(
@@ -60,17 +74,14 @@ public abstract class SnakeAbstract extends GameObject {
         if(isColliding()){
             for(GameObject go: colliders){
                 if(go instanceof Food){
-
                     ((Collectible) go).collected = true;
                     grow(((Food) go).getValue());
                 }
                 if((go instanceof SnakeAbstract)||(go instanceof Obstacle)){
-                    //System.out.println(kill());
                     kill();
                 }
             }
         }
-
         colliders.clear();
     }
 
@@ -83,26 +94,42 @@ public abstract class SnakeAbstract extends GameObject {
         }
     }
 
-    // collisionX, verifies overlaps accross X axis
-    boolean collisionX(GameObject other){
-        return
-                Math.abs(this.position.x - other.position.x) < (this.dims.x + other.dims.x)/2.0 - collisionDeadZone.x;
+    void wrap(){
+        SnakeSection head = sections.get(0);
+        if(head.position.x < 0){
+            sections.forEach(e->{
+                e.position.x += MAP_WIDTH;
+            });
+        }
+        if(head.position.y < 0){
+            sections.forEach(e->{
+                e.position.y += MAP_HEIGHT;
+            });
+        }
+        if(head.position.x > MAP_WIDTH){
+            sections.forEach(e->{
+                e.position.x -= MAP_WIDTH;
+            });
+        }
+        if(head.position.y > MAP_HEIGHT){
+            sections.forEach(e->{
+                e.position.y -= MAP_HEIGHT;
+            });
+        }
+
     }
-    // collisionY, checks overlaps accros Y axis
-    boolean collisionY(GameObject other){
-        return
-                Math.abs(this.position.y - other.position.y) < (this.dims.y + other.dims.y)/2.0 - collisionDeadZone.y;
+    boolean isCollidingWithSelf(){
+        return false;/*
+        SnakeSection head = this.sections.get(0);
+        for (int i = 2; i < sections.size(); i++){
+            // we ignore the first 3 sections and we focus on the rest
+            if(sections.get(i).collider != null){
+                if(sections.get(i).collider.getBoundsInLocal().intersects(head.collider.getBoundsInLocal())) return true;
+            }
+        }
+        return false;*/
     }
     boolean isCollidingWithOther(GameObject other){
-        /*if (other.getType().equals("Snake")){
-            for(SnakeSection s : ((SnakeAbstract)other).sections){
-                //collision with a snake is when the head hits the body of the other snake
-                if(collisionY(s) && collisionX(s))return true;
-            }
-            return false;
-        }
-        return collisionX(other) && collisionY(other);
-    */
         SnakeSection head = this.sections.get(0);
         if(other.getType().equals("Snake")){
             for(int i = 1; i < ((SnakeAbstract)other).sections.size(); i++){
@@ -115,11 +142,15 @@ public abstract class SnakeAbstract extends GameObject {
         if(other.getType().equals("Snake")){
             return false;
         }
-        return other.collider.getBoundsInLocal().intersects(head.collider.getBoundsInLocal());
+        //System.out.println(other.getType()+other.collider);
+        if(other.collider != null) {
+            return other.collider.getBoundsInLocal().intersects(head.collider.getBoundsInLocal());
+        }
+        return false;
     }
     public boolean Collided(GameObject other){
         if (other == this){
-            return false;
+            return isCollidingWithSelf();
         }
         return isCollidingWithOther(other);
     }
@@ -132,8 +163,10 @@ public abstract class SnakeAbstract extends GameObject {
     public void grow(int scs){
         int sz = sections.size();
         Vec2 drop = sections.get(sz-2).position;
+        speed += scs;
+        scoreCnt.set(scoreCnt.get() + scs);
         for (int i = 0; i < scs; i++){
-            sections.add(new SnakeSection(drop.x, drop.y, dims.x,
+            sections.add(new SnakeSection(drop.x, drop.y, dims.x, collisionDeadZone,
                     (int) (c.getRed() * 255),
                     (int) (c.getGreen() * 255),
                     (int) (c.getBlue() * 255)));
@@ -142,8 +175,7 @@ public abstract class SnakeAbstract extends GameObject {
     public boolean isDead(){
         return dead;
     }
-    public int kill(){// returns the number of points the player collected
+    public void kill(){// returns the number of points the player collected
         this.dead = true;
-        return sections.size();
     }
 }
