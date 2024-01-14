@@ -3,7 +3,6 @@ package org.example.snakegame.gamescenes;
 import com.almasb.fxgl.core.math.Vec2;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -11,7 +10,6 @@ import javafx.stage.Stage;
 import org.example.snakegame.controllerclasses.Input;
 import org.example.snakegame.controllerclasses.RandGen;
 import org.example.snakegame.gameclasses.*;
-import org.example.snakegame.globals.GameParameters;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,10 +18,9 @@ import java.util.stream.Collectors;
 
 import static org.example.snakegame.globals.GameParameters.*;
 
-public class SinglePlayerScene extends GameScene {
+public class SinglePlayerMouseScene extends GameScene{
     Stage stage;
-    KeyboardPlayerSnake player;
-    HashMap<String, KeyCode> inputKeys;
+    MousePlayerSnake player;
     Group root;
     Canvas c;
     long gameTime;
@@ -37,34 +34,26 @@ public class SinglePlayerScene extends GameScene {
     boolean reload = false;
     GameLabel labelScore = new GameLabel("", true, false, new Vec2(20, 20), 20);
     GameLabel labelDeathMessage = new GameLabel("", false, true, new Vec2(WIDTH/2, HEIGHT/2-50), 50);
-    public static SinglePlayerScene create(Stage stage) {
+
+    public static SinglePlayerMouseScene create(Stage stage) {
         score1.set(0);
         score2.set(0);
-        HashMap<String, KeyCode> inputKeys = new HashMap<>();
-        inputKeys.put("up", KeyCode.Z);
-        inputKeys.put("down", KeyCode.S);
-        inputKeys.put("left", KeyCode.Q);
-        inputKeys.put("right", KeyCode.D);
         Group root = new Group();
         Canvas c = new Canvas(WIDTH, HEIGHT);
-        return new SinglePlayerScene(stage, c, root, inputKeys);
+        return new SinglePlayerMouseScene(stage, c, root);
     }
 
-    private SinglePlayerScene(Stage stage, Canvas c, Group root, HashMap<String, KeyCode> inputKeys) {
+    private SinglePlayerMouseScene(Stage stage, Canvas c, Group root) {
         super(root);
         this.stage = stage;
-        this.inputKeys = inputKeys;
         this.root = root;
         this.elements = new LinkedList<>();
         this.gameEnded = false;
         this.reload = false;
-        this.player = new KeyboardPlayerSnake(10 + (float) WIDTH/4, 10 + (float) MAP_HEIGHT / 2, 20, 20, score1, true, inputKeys);
+        this.player = new MousePlayerSnake(10 + (float) MAP_WIDTH / 4, 10 + (float) MAP_HEIGHT / 2, 20, 20);
+        this.elements.add(this.player);
         labelScore.show();
         labelDeathMessage.hide();
-        //new MousePlayerSnake(10 + (float) MAP_WIDTH / 4, 10 + (float) MAP_HEIGHT / 2, 20, 20);
-        this.elements.add(labelScore);
-        this.elements.add(this.player);
-
         this.c = c;
         for (int i = 0; i < collCountMax; i++) {
             this.elements.add(new Food(RandGen.randInt(WIDTH/2, MAP_WIDTH - WIDTH/2), RandGen.randInt(HEIGHT/2, MAP_HEIGHT - HEIGHT/2),
@@ -155,8 +144,7 @@ public class SinglePlayerScene extends GameScene {
             }
             Input.add(e.getCode(), true);
         });
-        this.setOnMouseEntered(e->Input.setNewMousePos((float) e.getX(), (float) e.getY()));
-        this.setOnMouseMoved(e->Input.setNewMousePos((float) e.getX() ,(float) e.getY()));
+        this.setOnMouseMoved(e->Input.setNewMousePos((float) e.getSceneX() ,(float) e.getSceneY()));
         stage.setScene(this);
         stage.setResizable(false);
         stage.show();
@@ -168,4 +156,5 @@ public class SinglePlayerScene extends GameScene {
     public void stopTimer(){
         timer.stop();
     }
+
 }

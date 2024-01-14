@@ -23,6 +23,7 @@ public class Menu extends GameScene {
         this.stage = stage;
         // Create buttons
         Button singlePlayerButton = new Button("Single Player");
+        Button singlePlayerMouseButton = new Button("Single Player with mouse");
         Button twoPlayersButton = new Button("Two Players");
         Button networkPlayButton = new Button("Network Play");
         Button exitButton = new Button("Exit");
@@ -31,14 +32,14 @@ public class Menu extends GameScene {
         twoPlayersButton.setOnAction(event -> SceneManager.goToTwoPlayers(stage));
         networkPlayButton.setOnAction(event -> SceneManager.goToNetworkPlay(stage));
         exitButton.setOnAction(event -> stage.close());
-
+        singlePlayerMouseButton.setOnAction(event-> SceneManager.goToSinglePlayerMouse(stage));
         // Create layout
         root.setPadding(new Insets(20, 20, 20, 20));
         singlePlayerButton.setStyle("margin-bottom: 20px;");
         twoPlayersButton.setStyle("margin-bottom: 20px;");
         networkPlayButton.setStyle("margin-bottom: 20px;");
         exitButton.setStyle("margin-bottom: 20px;");
-        root.getChildren().addAll(singlePlayerButton, twoPlayersButton, networkPlayButton, exitButton);
+        root.getChildren().addAll(singlePlayerButton,singlePlayerMouseButton, twoPlayersButton, networkPlayButton, exitButton);
     }
     public void startScene(){
         stage.setScene(this);

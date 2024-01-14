@@ -124,7 +124,7 @@ public class TwoPlayerScene extends GameScene {
                     go.draw(gc);
 
                 });
-                // check for collisions
+
                 if (player1.isDead()) {
                     labelWinner.setText("Player 2 Won!!!\nPlayer 1 scored: "+score1.get()+"\nPlayer2 scored: "+score2.get()+"\nPress any key to restart");
                     labelWinner.show();

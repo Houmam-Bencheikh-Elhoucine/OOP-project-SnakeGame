@@ -14,9 +14,7 @@ public class MousePlayerSnake extends SnakeAbstract{
     @Override
     void updateVelocity() {
         Vec2 mousePos = Input.getMousePos();
-        this.velocity = mousePos.sub(position);
-        this.velocity.normalizeLocal();
-        this.velocity.mulLocal(speed);
+        this.velocity = mousePos.sub(this.sections.get(0).position).normalize().mul(speed);
 //        System.out.println(this.velocity);
     }
     @Override

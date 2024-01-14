@@ -19,7 +19,13 @@ public class SceneManager {
         mainScene = SinglePlayerScene.create(stage);
         start(stage);
     }
-
+    public static void goToSinglePlayerMouse(Stage stage) {
+        if(mainScene != null) {
+            mainScene.stopTimer();
+        }
+        mainScene = SinglePlayerMouseScene.create(stage);
+        start(stage);
+    }
     public static void goToTwoPlayers(Stage stage) {
         if(mainScene != null) {
             mainScene.stopTimer();
