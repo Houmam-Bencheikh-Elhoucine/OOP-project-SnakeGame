@@ -176,7 +176,7 @@ public class SinglePlayerMouseScene extends GameScene{
     }
 
     public void reloadScene(){
-        SceneManager.goToSinglePlayer(this.stage);
+        SceneManager.goToSinglePlayerMouse(this.stage);
     }
     public void stopTimer(){
         timer.stop();
