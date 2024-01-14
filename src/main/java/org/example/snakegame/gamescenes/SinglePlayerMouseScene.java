@@ -56,6 +56,7 @@ public class SinglePlayerMouseScene extends GameScene{
         this.elements.add(this.player);
         labelScore.show();
         labelDeathMessage.hide();
+        elements.add(labelScore);
         this.c = c;
         for (int i = 0; i < collCountMax; i++) {
             this.elements.add(new Food(RandGen.randInt(WIDTH/2, MAP_WIDTH - WIDTH/2), RandGen.randInt(HEIGHT/2, MAP_HEIGHT - HEIGHT/2),
@@ -149,6 +150,7 @@ public class SinglePlayerMouseScene extends GameScene{
                 Input.clean();
                 maxObstacles = score1.get();
                 maxAi = score1.get()+2;
+                labelScore.setText("Score: "+score1.get());
                 gameTime = l;
             }
         };
